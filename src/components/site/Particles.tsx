@@ -1,6 +1,13 @@
-import { useMemo } from "react";
+import { useEffect, useMemo, useState } from "react";
+
+function useMounted() {
+  const [mounted, setMounted] = useState(false);
+  useEffect(() => setMounted(true), []);
+  return mounted;
+}
 
 export function Particles({ count = 26 }: { count?: number }) {
+  const mounted = useMounted();
   const dust = useMemo(
     () =>
       Array.from({ length: count }).map(() => ({
@@ -12,6 +19,8 @@ export function Particles({ count = 26 }: { count?: number }) {
       })),
     [count],
   );
+
+  if (!mounted) return null;
 
   return (
     <div aria-hidden className="pointer-events-none absolute inset-0 overflow-hidden">

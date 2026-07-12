@@ -44,6 +44,7 @@ export function Particles({ count = 26 }: { count?: number }) {
 }
 
 export function Smoke() {
+  const mounted = useMounted();
   const puffs = useMemo(
     () =>
       Array.from({ length: 6 }).map((_, i) => ({
@@ -54,6 +55,7 @@ export function Smoke() {
       })),
     [],
   );
+  if (!mounted) return null;
   return (
     <div aria-hidden className="pointer-events-none absolute inset-0 overflow-hidden">
       {puffs.map((p, i) => (

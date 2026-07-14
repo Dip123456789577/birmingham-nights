@@ -1,6 +1,6 @@
-import { useRef, useState, type MouseEvent } from "react";
+import { useRef, useState, useEffect, type MouseEvent } from "react";
 import { AnimatePresence, motion } from "motion/react";
-import { X, Plus, Quote, Play } from "lucide-react";
+import { X, Plus, Quote, Play, Pause } from "lucide-react";
 import { CHARACTERS, type Character } from "@/data/series";
 import { SectionHeading } from "./SectionHeading";
 import { Reveal } from "./Reveal";
@@ -60,6 +60,31 @@ function Card({ c, onOpen }: { c: Character; onOpen: () => void }) {
 
 export function Characters() {
   const [selected, setSelected] = useState<Character | null>(null);
+  const [demoReelPlaying, setDemoReelPlaying] = useState(false);
+  const videoRef = useRef<HTMLVideoElement>(null);
+
+  const toggleDemoReel = () => {
+    const video = videoRef.current;
+    if (!video) return;
+    if (video.paused) {
+      video.play().catch(() => {});
+      setDemoReelPlaying(true);
+    } else {
+      video.pause();
+      setDemoReelPlaying(false);
+    }
+  };
+
+  useEffect(() => {
+    if (selected) {
+      setDemoReelPlaying(false);
+      const video = videoRef.current;
+      if (video) {
+        video.currentTime = 0;
+        video.pause();
+      }
+    }
+  }, [selected]);
 
   return (
     <section id="characters" className="relative border-t border-border/40 py-24 sm:py-32">
@@ -87,7 +112,13 @@ export function Characters() {
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
           >
-            <div className="absolute inset-0 bg-background/85 backdrop-blur-md" onClick={() => setSelected(null)} />
+            <div
+              className="absolute inset-0 bg-background/85 backdrop-blur-md"
+              onClick={() => {
+                setSelected(null);
+                setDemoReelPlaying(false);
+              }}
+            />
             <motion.div
               initial={{ opacity: 0, scale: 0.94, y: 20 }}
               animate={{ opacity: 1, scale: 1, y: 0 }}
@@ -101,7 +132,10 @@ export function Characters() {
               </div>
               <div className="relative overflow-y-auto p-8 sm:p-10">
                 <button
-                  onClick={() => setSelected(null)}
+                  onClick={() => {
+                    setSelected(null);
+                    setDemoReelPlaying(false);
+                  }}
                   aria-label="Close"
                   className="absolute right-5 top-5 grid size-9 place-items-center border border-border text-gold transition-colors hover:border-gold"
                 >
@@ -117,53 +151,71 @@ export function Characters() {
                 <div className="mt-6">
                   <h4 className="font-display text-lg font-semibold text-gold mb-3">Demo Reel</h4>
                   <div className="relative aspect-video overflow-hidden rounded-lg rim-gold gold-glow bg-gradient-to-br from-background to-background/80">
-                    <img
-                      src={selected.image}
-                      alt={`${selected.name} demo reel`}
-                      className="size-full object-cover opacity-70"
-                    />
-                    
-                    {/* Animated overlay */}
-                    <div className="absolute inset-0 bg-gradient-to-t from-background/90 via-transparent to-background/40" />
-                    
-                    {/* Animated text */}
-                    <motion.div
-                      className="absolute bottom-6 left-6 right-6"
-                      initial={{ opacity: 0, y: 20 }}
-                      animate={{ opacity: 1, y: 0 }}
-                      transition={{ duration: 0.8 }}
+                    <video
+                      key={selected.id}
+                      ref={videoRef}
+                      poster={selected.image}
+                      className="size-full object-cover transition-all duration-700"
+                      playsInline
+                      loop
+                      onClick={toggleDemoReel}
+                      onPlay={() => setDemoReelPlaying(true)}
+                      onPause={() => setDemoReelPlaying(false)}
                     >
-                      <motion.p
-                        className="font-display text-xl text-foreground"
-                        initial={{ opacity: 0 }}
-                        animate={{ opacity: 1 }}
-                        transition={{ delay: 0.3, duration: 0.8 }}
-                      >
-                        {selected.name}
-                      </motion.p>
-                      <motion.p
-                        className="text-sm text-muted-foreground mt-1"
-                        initial={{ opacity: 0 }}
-                        animate={{ opacity: 1 }}
-                        transition={{ delay: 0.5, duration: 0.8 }}
-                      >
-                        {selected.quote}
-                      </motion.p>
-                    </motion.div>
-                    
-                    {/* Play button */}
-                    <div className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2">
-                      <motion.div
-                        className="grid size-16 place-items-center rounded-full border border-gold/70 bg-background/50 text-gold backdrop-blur-md hover:scale-110 hover:bg-gold hover:text-background transition-all duration-300"
-                        whileHover={{ scale: 1.1 }}
-                        initial={{ scale: 0.9, opacity: 0 }}
-                        animate={{ scale: 1, opacity: 1 }}
-                        transition={{ delay: 0.2, duration: 0.6 }}
-                      >
-                        <Play className="size-6 ml-1 fill-current" />
-                      </motion.div>
-                    </div>
-                    
+                      <source src={selected.demoReelUrl} type="video/mp4" />
+                    </video>
+
+                    {!demoReelPlaying && (
+                      <div className="absolute inset-0">
+                        {/* Animated overlay */}
+                        <div className="absolute inset-0 bg-gradient-to-t from-background/90 via-transparent to-background/40" />
+
+                        {/* Animated text */}
+                        <motion.div
+                          className="absolute bottom-6 left-6 right-6"
+                          initial={{ opacity: 0, y: 20 }}
+                          animate={{ opacity: 1, y: 0 }}
+                          transition={{ duration: 0.8 }}
+                        >
+                          <motion.p
+                            className="font-display text-xl text-foreground"
+                            initial={{ opacity: 0 }}
+                            animate={{ opacity: 1 }}
+                            transition={{ delay: 0.3, duration: 0.8 }}
+                          >
+                            {selected.name}
+                          </motion.p>
+                          <motion.p
+                            className="text-sm text-muted-foreground mt-1"
+                            initial={{ opacity: 0 }}
+                            animate={{ opacity: 1 }}
+                            transition={{ delay: 0.5, duration: 0.8 }}
+                          >
+                            {selected.quote}
+                          </motion.p>
+                        </motion.div>
+                      </div>
+                    )}
+
+                    {/* Play/Pause button */}
+                    <motion.button
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        toggleDemoReel();
+                      }}
+                      aria-label={demoReelPlaying ? "Pause demo reel" : "Play demo reel"}
+                      className="absolute left-1/2 top-1/2 z-10 grid size-20 -translate-x-1/2 -translate-y-1/2 place-items-center rounded-full border border-gold/70 bg-background/40 text-gold backdrop-blur-md transition-all duration-500 hover:scale-110 hover:bg-gold hover:text-primary-foreground"
+                      initial={{ scale: 0.8, opacity: 0 }}
+                      animate={{ scale: 1, opacity: demoReelPlaying ? 0 : 1 }}
+                      transition={{ duration: 0.5 }}
+                    >
+                      {demoReelPlaying ? (
+                        <Pause className="size-8" />
+                      ) : (
+                        <Play className="ml-1 size-8 fill-current" />
+                      )}
+                    </motion.button>
+
                     {/* Film grain */}
                     <div
                       className="absolute inset-0 opacity-30 mix-blend-overlay pointer-events-none"

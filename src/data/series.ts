@@ -10,6 +10,15 @@ import gallery3 from "@/assets/gallery-3.jpg";
 import gallery4 from "@/assets/gallery-4.jpg";
 import gallery5 from "@/assets/gallery-5.jpg";
 import gallery6 from "@/assets/gallery-6.jpg";
+import trailerVideo from "@/assets/trailer.mp4.asset.json";
+
+// TODO: Add character-specific demo reel assets here when available
+// import aldousDemoReel from "@/assets/aldous-demo.mp4.asset.json";
+// import mercyDemoReel from "@/assets/mercy-demo.mp4.asset.json";
+// import silasDemoReel from "@/assets/silas-demo.mp4.asset.json";
+// import bramDemoReel from "@/assets/bram-demo.mp4.asset.json";
+// import adaDemoReel from "@/assets/ada-demo.mp4.asset.json";
+// import isoldeDemoReel from "@/assets/isolde-demo.mp4.asset.json";
 
 export type NavItem = { label: string; href: string };
 
@@ -37,6 +46,7 @@ export type Character = {
   bio: string;
   quote: string;
   traits: string[];
+  demoReelUrl: string;
 };
 
 export const CHARACTERS: Character[] = [
@@ -49,6 +59,9 @@ export const CHARACTERS: Character[] = [
     quote: "I don't pay for suits. My suits are paid for by an understanding.",
     bio: "Decorated by the war and haunted by it, Aldous returned to Birmingham with a mind three moves ahead of every man in the room. He turns a back-street betting shop into a legitimate empire — one favour, one threat, one funeral at a time.",
     traits: ["Strategist", "War Veteran", "Chairman"],
+    // TODO: Replace with character-specific demo reel when available
+    // demoReelUrl: aldousDemoReel.url,
+    demoReelUrl: trailerVideo.url,
   },
   {
     id: "mercy",
@@ -59,6 +72,9 @@ export const CHARACTERS: Character[] = [
     quote: "This family runs on my word. Forget it, and you'll not run at all.",
     bio: "The still centre of the storm. Mercy holds the family's history, its secrets and its purse. She raised the Vane children on grief and grit, and no deal is done until she has weighed it with her cold, unerring eye.",
     traits: ["Matriarch", "Keeper of Secrets", "Power Broker"],
+    // TODO: Replace with character-specific demo reel when available
+    // demoReelUrl: mercyDemoReel.url,
+    demoReelUrl: trailerVideo.url,
   },
   {
     id: "silas",
@@ -69,6 +85,9 @@ export const CHARACTERS: Character[] = [
     quote: "Rules are for men too frightened to be free.",
     bio: "Charming, reckless and quick with a razor, Silas is the spark the family both needs and fears. His hunger for the next thrill drags the Vanes into wars they never intended — and wins them some they never could.",
     traits: ["Firebrand", "Enforcer", "Gambler"],
+    // TODO: Replace with character-specific demo reel when available
+    // demoReelUrl: silasDemoReel.url,
+    demoReelUrl: trailerVideo.url,
   },
   {
     id: "bram",
@@ -79,6 +98,9 @@ export const CHARACTERS: Character[] = [
     quote: "Talk finishes. I begin where talk finishes.",
     bio: "A mountain of a man with a soldier's discipline and a saint's patience — until it runs out. Bram is the family's shield and its final argument, loyal to Aldous beyond reason and beyond mercy.",
     traits: ["Muscle", "Loyalist", "Bare-knuckle Champion"],
+    // TODO: Replace with character-specific demo reel when available
+    // demoReelUrl: bramDemoReel.url,
+    demoReelUrl: trailerVideo.url,
   },
   {
     id: "ada",
@@ -89,6 +111,9 @@ export const CHARACTERS: Character[] = [
     quote: "You built an empire on blood. I'll spend it on something better.",
     bio: "Sharp, well-read and quietly radical, Ada moves between the family's world and the salons of the reformers. She is the Vanes' link to a changing Britain — and the only one who dares tell Aldous the truth.",
     traits: ["Idealist", "Negotiator", "Reformer"],
+    // TODO: Replace with character-specific demo reel when available
+    // demoReelUrl: adaDemoReel.url,
+    demoReelUrl: trailerVideo.url,
   },
   {
     id: "isolde",
@@ -99,6 +124,9 @@ export const CHARACTERS: Character[] = [
     quote: "Everyone in Birmingham owes someone. Even the Vanes.",
     bio: "Landlady of The Anvil and keeper of every whispered confession in the city. Isolde sees everything and forgets nothing — which makes her the most dangerous ally, and the most tempting enemy, the family has ever known.",
     traits: ["Publican", "Informant", "Wildcard"],
+    // TODO: Replace with character-specific demo reel when available
+    // demoReelUrl: isoldeDemoReel.url,
+    demoReelUrl: trailerVideo.url,
   },
 ];
 

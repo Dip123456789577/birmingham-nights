@@ -1,6 +1,6 @@
 import { useRef, useState, type MouseEvent } from "react";
 import { AnimatePresence, motion } from "motion/react";
-import { X, Plus, Quote } from "lucide-react";
+import { X, Plus, Quote, Play } from "lucide-react";
 import { CHARACTERS, type Character } from "@/data/series";
 import { SectionHeading } from "./SectionHeading";
 import { Reveal } from "./Reveal";
@@ -40,9 +40,14 @@ function Card({ c, onOpen }: { c: Character; onOpen: () => void }) {
         />
         <div className="absolute inset-0 bg-gradient-to-t from-background via-background/20 to-transparent" />
         <div className="absolute inset-0 opacity-0 transition-opacity duration-500 group-hover:opacity-100" style={{ boxShadow: "inset 0 0 60px -10px rgba(233,193,118,0.5)" }} />
-        <span className="absolute right-3 top-3 grid size-9 place-items-center border border-gold/50 bg-background/50 text-gold opacity-0 backdrop-blur-sm transition-all duration-500 group-hover:opacity-100">
-          <Plus className="size-4" />
-        </span>
+        
+        {/* Demo Reel Button */}
+        <div className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 flex flex-col items-center gap-2 opacity-0 transition-all duration-500 group-hover:opacity-100">
+          <div className="grid size-12 place-items-center rounded-full border border-gold/80 bg-background/70 text-gold backdrop-blur-md hover:scale-110 hover:bg-gold hover:text-background transition-all duration-300">
+            <Play className="size-5 ml-0.5 fill-current" />
+          </div>
+          <span className="label-caps text-[0.6rem] text-gold tracking-widest uppercase">Demo Reel</span>
+        </div>
       </div>
       <div className="absolute inset-x-0 bottom-0 p-5">
         <span className="label-caps text-[0.6rem] text-gold">{c.role}</span>
@@ -107,6 +112,68 @@ export function Characters() {
                 <p className="mt-1 text-sm text-muted-foreground">
                   Portrayed by <span className="text-foreground">{selected.actor}</span>
                 </p>
+
+                {/* Character Demo Reel */}
+                <div className="mt-6">
+                  <h4 className="font-display text-lg font-semibold text-gold mb-3">Demo Reel</h4>
+                  <div className="relative aspect-video overflow-hidden rounded-lg rim-gold gold-glow bg-gradient-to-br from-background to-background/80">
+                    <img
+                      src={selected.image}
+                      alt={`${selected.name} demo reel`}
+                      className="size-full object-cover opacity-70"
+                    />
+                    
+                    {/* Animated overlay */}
+                    <div className="absolute inset-0 bg-gradient-to-t from-background/90 via-transparent to-background/40" />
+                    
+                    {/* Animated text */}
+                    <motion.div
+                      className="absolute bottom-6 left-6 right-6"
+                      initial={{ opacity: 0, y: 20 }}
+                      animate={{ opacity: 1, y: 0 }}
+                      transition={{ duration: 0.8 }}
+                    >
+                      <motion.p
+                        className="font-display text-xl text-foreground"
+                        initial={{ opacity: 0 }}
+                        animate={{ opacity: 1 }}
+                        transition={{ delay: 0.3, duration: 0.8 }}
+                      >
+                        {selected.name}
+                      </motion.p>
+                      <motion.p
+                        className="text-sm text-muted-foreground mt-1"
+                        initial={{ opacity: 0 }}
+                        animate={{ opacity: 1 }}
+                        transition={{ delay: 0.5, duration: 0.8 }}
+                      >
+                        {selected.quote}
+                      </motion.p>
+                    </motion.div>
+                    
+                    {/* Play button */}
+                    <div className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2">
+                      <motion.div
+                        className="grid size-16 place-items-center rounded-full border border-gold/70 bg-background/50 text-gold backdrop-blur-md hover:scale-110 hover:bg-gold hover:text-background transition-all duration-300"
+                        whileHover={{ scale: 1.1 }}
+                        initial={{ scale: 0.9, opacity: 0 }}
+                        animate={{ scale: 1, opacity: 1 }}
+                        transition={{ delay: 0.2, duration: 0.6 }}
+                      >
+                        <Play className="size-6 ml-1 fill-current" />
+                      </motion.div>
+                    </div>
+                    
+                    {/* Film grain */}
+                    <div
+                      className="absolute inset-0 opacity-30 mix-blend-overlay pointer-events-none"
+                      style={{
+                        backgroundImage: `url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.65' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%' height='100%' filter='url(%23noise)'/%3E%3C/svg%3E")`,
+                      }}
+                    />
+                  </div>
+                </div>
+
                 <div className="mt-6 flex items-start gap-3 border-l-2 border-gold/60 pl-4">
                   <Quote className="mt-1 size-4 shrink-0 text-gold" />
                   <p className="font-display text-lg italic text-foreground/90">{selected.quote}</p>

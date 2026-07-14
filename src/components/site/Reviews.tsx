@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { AnimatePresence, motion } from "motion/react";
-import { Star, Quote, ChevronLeft, ChevronRight } from "lucide-react";
-import { REVIEWS } from "@/data/series";
+import { Star, Quote, ChevronLeft, ChevronRight, User } from "lucide-react";
+import { REVIEWS, TESTIMONIALS } from "@/data/series";
 import { SectionHeading } from "./SectionHeading";
 import { Reveal } from "./Reveal";
 
@@ -21,7 +21,9 @@ function Stars({ n }: { n: number }) {
 export function Reviews() {
   const [i, setI] = useState(0);
   const [expanded, setExpanded] = useState(false);
+  const [testimonialIdx, setTestimonialIdx] = useState(0);
   const r = REVIEWS[i];
+
   const go = (dir: number) => {
     setExpanded(false);
     setI((p) => (p + dir + REVIEWS.length) % REVIEWS.length);
@@ -80,7 +82,10 @@ export function Reviews() {
             {REVIEWS.map((_, idx) => (
               <button
                 key={idx}
-                onClick={() => { setExpanded(false); setI(idx); }}
+                onClick={() => {
+                  setExpanded(false);
+                  setI(idx);
+                }}
                 aria-label={`Go to review ${idx + 1}`}
                 className={`h-1.5 transition-all ${idx === i ? "w-8 bg-gold" : "w-4 bg-border hover:bg-bronze"}`}
               />
@@ -93,6 +98,69 @@ export function Reviews() {
           >
             <ChevronRight className="size-5" />
           </button>
+        </div>
+
+        {/* Audience testimonials */}
+        <div className="mt-20">
+          <Reveal>
+            <div className="flex items-center gap-3">
+              <User className="size-5 text-gold" />
+              <h3 className="font-display text-2xl text-foreground">From the Audience</h3>
+            </div>
+          </Reveal>
+
+          <Reveal delay={0.08}>
+            <div className="glass rim-gold mt-8 p-8">
+              <AnimatePresence mode="wait">
+                <motion.div
+                  key={testimonialIdx}
+                  initial={{ opacity: 0, x: 20 }}
+                  animate={{ opacity: 1, x: 0 }}
+                  exit={{ opacity: 0, x: -20 }}
+                  transition={{ duration: 0.35 }}
+                >
+                  <p className="font-display text-xl italic leading-relaxed text-foreground/90">
+                    "{TESTIMONIALS[testimonialIdx].quote}"
+                  </p>
+                  <p className="mt-4 text-sm text-muted-foreground">
+                    — {TESTIMONIALS[testimonialIdx].author},{" "}
+                    <span className="text-gold">{TESTIMONIALS[testimonialIdx].location}</span>
+                  </p>
+                </motion.div>
+              </AnimatePresence>
+
+              <div className="mt-6 flex items-center justify-between border-t border-border/60 pt-5">
+                <div className="flex gap-2">
+                  {TESTIMONIALS.map((_, idx) => (
+                    <button
+                      key={idx}
+                      onClick={() => setTestimonialIdx(idx)}
+                      aria-label={`Go to testimonial ${idx + 1}`}
+                      className={`h-1.5 transition-all ${idx === testimonialIdx ? "w-6 bg-gold" : "w-3 bg-border hover:bg-bronze"}`}
+                    />
+                  ))}
+                </div>
+                <div className="flex gap-2">
+                  <button
+                    onClick={() =>
+                      setTestimonialIdx((p) => (p - 1 + TESTIMONIALS.length) % TESTIMONIALS.length)
+                    }
+                    aria-label="Previous testimonial"
+                    className="grid size-9 place-items-center border border-border text-gold transition-colors hover:border-gold"
+                  >
+                    <ChevronLeft className="size-4" />
+                  </button>
+                  <button
+                    onClick={() => setTestimonialIdx((p) => (p + 1) % TESTIMONIALS.length)}
+                    aria-label="Next testimonial"
+                    className="grid size-9 place-items-center border border-border text-gold transition-colors hover:border-gold"
+                  >
+                    <ChevronRight className="size-4" />
+                  </button>
+                </div>
+              </div>
+            </div>
+          </Reveal>
         </div>
       </div>
     </section>

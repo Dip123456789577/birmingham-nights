@@ -16,12 +16,12 @@ export type NavItem = { label: string; href: string };
 export const NAV_ITEMS: NavItem[] = [
   { label: "Home", href: "#home" },
   { label: "Story", href: "#story" },
-  { label: "Family", href: "#characters" },
+  { label: "Characters", href: "#characters" },
   { label: "Seasons", href: "#seasons" },
-  { label: "Trailer", href: "#trailer" },
   { label: "Gallery", href: "#gallery" },
-  { label: "Ratings", href: "#ratings" },
+  { label: "Trailer", href: "#trailer" },
   { label: "Reviews", href: "#reviews" },
+  { label: "Ratings", href: "#ratings" },
   { label: "Awards", href: "#awards" },
   { label: "Timeline", href: "#timeline" },
   { label: "FAQ", href: "#faq" },
@@ -172,9 +172,20 @@ export type Rating = {
 export const RATINGS: Rating[] = [
   { label: "IMDb", value: 94, suffix: "/100", detail: "Top 50 Crime Dramas" },
   { label: "Rotten Tomatoes", value: 97, suffix: "%", detail: "Certified Fresh" },
+  { label: "Google Users", value: 92, suffix: "%", detail: "Loved by Viewers" },
   { label: "Audience Score", value: 96, suffix: "%", detail: "Verified Viewers" },
-  { label: "Metacritic", value: 89, suffix: "/100", detail: "Universal Acclaim" },
 ];
+
+export const RATING_DISTRIBUTION = [
+  { stars: 5, percent: 78 },
+  { stars: 4, percent: 14 },
+  { stars: 3, percent: 5 },
+  { stars: 2, percent: 2 },
+  { stars: 1, percent: 1 },
+];
+
+export const RATING_SUMMARY =
+  "Across 12,400+ verified reviews, VANE & CO holds universal acclaim — praised for atmosphere, ensemble performances and its uncompromising vision of post-war Birmingham.";
 
 export type Review = {
   quote: string;
@@ -183,6 +194,35 @@ export type Review = {
   stars: number;
   full: string;
 };
+
+export type Testimonial = {
+  quote: string;
+  author: string;
+  location: string;
+};
+
+export const TESTIMONIALS: Testimonial[] = [
+  {
+    quote: "I've watched every episode twice. The atmosphere is unlike anything on television.",
+    author: "Eleanor W.",
+    location: "Birmingham",
+  },
+  {
+    quote: "Callum Hardacre owns every scene. This is prestige TV at its finest.",
+    author: "Marcus D.",
+    location: "London",
+  },
+  {
+    quote: "The soundtrack alone is worth it. Dark, beautiful, and completely addictive.",
+    author: "Priya S.",
+    location: "Leeds",
+  },
+  {
+    quote: "Best crime drama since Boardwalk Empire. The family dynamics are electric.",
+    author: "Tom H.",
+    location: "Glasgow",
+  },
+];
 
 export const REVIEWS: Review[] = [
   {

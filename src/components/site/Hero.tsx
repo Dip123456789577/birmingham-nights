@@ -1,10 +1,14 @@
-import { useRef } from "react";
-import { motion, useScroll, useTransform } from "motion/react";
+import { useRef, useEffect, lazy, Suspense } from "react";
+import { motion, useScroll, useTransform, useSpring, useMotionValue } from "motion/react";
 import { Play, Users, ChevronsDown } from "lucide-react";
 import heroImg from "@/assets/hero.jpg";
 import { MagneticButton } from "./MagneticButton";
 import { Smoke, Particles } from "./Particles";
 import { MusicToggle } from "./MusicToggle";
+
+const HeroScene = lazy(() =>
+  import("./HeroScene").then((m) => ({ default: m.HeroScene })),
+);
 
 export function Hero({ onTrailer }: { onTrailer: () => void }) {
   const ref = useRef<HTMLElement>(null);
@@ -12,10 +16,28 @@ export function Hero({ onTrailer }: { onTrailer: () => void }) {
     target: ref,
     offset: ["start start", "end start"],
   });
+
+  const mouseX = useMotionValue(0);
+  const mouseY = useMotionValue(0);
+  const smoothX = useSpring(mouseX, { stiffness: 60, damping: 20 });
+  const smoothY = useSpring(mouseY, { stiffness: 60, damping: 20 });
+
   const bgY = useTransform(scrollYProgress, [0, 1], ["0%", "22%"]);
   const bgScale = useTransform(scrollYProgress, [0, 1], [1.08, 1.24]);
   const contentY = useTransform(scrollYProgress, [0, 1], ["0%", "60%"]);
   const contentOpacity = useTransform(scrollYProgress, [0, 0.6], [1, 0]);
+
+  const parallaxX = useTransform(smoothX, [-0.5, 0.5], ["-2%", "2%"]);
+  const contentParallaxX = useTransform(smoothX, [-0.5, 0.5], ["-12px", "12px"]);
+
+  useEffect(() => {
+    const onMove = (e: MouseEvent) => {
+      mouseX.set(e.clientX / window.innerWidth - 0.5);
+      mouseY.set(e.clientY / window.innerHeight - 0.5);
+    };
+    window.addEventListener("mousemove", onMove, { passive: true });
+    return () => window.removeEventListener("mousemove", onMove);
+  }, [mouseX, mouseY]);
 
   const goCharacters = () => {
     document.querySelector("#characters")?.scrollIntoView({ behavior: "smooth" });
@@ -23,25 +45,31 @@ export function Hero({ onTrailer }: { onTrailer: () => void }) {
 
   return (
     <section id="home" ref={ref} className="relative h-[100svh] min-h-[640px] overflow-hidden">
-      <motion.div style={{ y: bgY, scale: bgScale }} className="absolute inset-0">
+      <motion.div
+        style={{ y: bgY, scale: bgScale, x: parallaxX }}
+        className="absolute inset-0"
+      >
         <img
           src={heroImg}
           alt="Smoke-filled 1920s Birmingham street at dusk"
           width={1920}
           height={1088}
           className="size-full object-cover"
+          fetchPriority="high"
         />
       </motion.div>
 
-      {/* overlays */}
       <div className="absolute inset-0 bg-gradient-to-b from-background/70 via-background/40 to-background" />
       <div className="absolute inset-0 bg-gradient-to-r from-background/70 via-transparent to-background/40" />
 
+      <Suspense fallback={null}>
+        <HeroScene />
+      </Suspense>
       <Smoke />
       <Particles count={22} />
 
       <motion.div
-        style={{ y: contentY, opacity: contentOpacity }}
+        style={{ y: contentY, opacity: contentOpacity, x: contentParallaxX }}
         className="relative z-10 flex h-full flex-col items-center justify-center px-5 text-center"
       >
         <motion.span
@@ -92,8 +120,8 @@ export function Hero({ onTrailer }: { onTrailer: () => void }) {
           <MagneticButton onClick={onTrailer} aria-label="Watch the trailer">
             <Play className="size-4 fill-current" /> Watch Trailer
           </MagneticButton>
-          <MagneticButton variant="ghost" onClick={goCharacters} aria-label="Explore characters">
-            <Users className="size-4" /> Explore the Family
+          <MagneticButton variant="ghost" onClick={goCharacters} aria-label="Meet the characters">
+            <Users className="size-4" /> Meet the Characters
           </MagneticButton>
         </motion.div>
 

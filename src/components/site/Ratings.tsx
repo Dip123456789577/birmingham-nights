@@ -1,5 +1,5 @@
 import { motion } from "motion/react";
-import { RATINGS } from "@/data/series";
+import { RATINGS, RATING_DISTRIBUTION, RATING_SUMMARY } from "@/data/series";
 import { SectionHeading } from "./SectionHeading";
 import { Reveal } from "./Reveal";
 import { useCountUp } from "./useCountUp";
@@ -48,6 +48,31 @@ function Dial({ value, label, suffix, detail }: (typeof RATINGS)[number]) {
   );
 }
 
+function Distribution() {
+  return (
+    <div className="glass rim-gold flex flex-col justify-center p-8">
+      <h3 className="label-caps text-gold">Rating Distribution</h3>
+      <div className="mt-6 flex flex-col gap-3">
+        {RATING_DISTRIBUTION.map((row) => (
+          <div key={row.stars} className="flex items-center gap-3">
+            <span className="w-8 text-right text-xs text-muted-foreground">{row.stars}★</span>
+            <div className="relative h-2 flex-1 overflow-hidden bg-border/40">
+              <motion.div
+                className="absolute inset-y-0 left-0 bg-gradient-to-r from-bronze to-gold"
+                initial={{ width: 0 }}
+                whileInView={{ width: `${row.percent}%` }}
+                viewport={{ once: true }}
+                transition={{ duration: 1.2, delay: (5 - row.stars) * 0.08, ease: [0.16, 1, 0.3, 1] }}
+              />
+            </div>
+            <span className="w-10 text-right text-xs text-gold">{row.percent}%</span>
+          </div>
+        ))}
+      </div>
+    </div>
+  );
+}
+
 export function Ratings() {
   return (
     <section id="ratings" className="relative border-t border-border/40 py-24 sm:py-32">
@@ -63,6 +88,32 @@ export function Ratings() {
               <Dial {...r} />
             </Reveal>
           ))}
+        </div>
+
+        <div className="mt-8 grid gap-5 lg:grid-cols-[1fr_380px]">
+          <Reveal>
+            <div className="glass rim-gold p-8">
+              <h3 className="label-caps text-gold">Review Summary</h3>
+              <p className="mt-4 text-lg leading-relaxed text-foreground/85">{RATING_SUMMARY}</p>
+              <div className="mt-6 flex flex-wrap gap-6 border-t border-border/60 pt-6">
+                <div>
+                  <span className="font-display text-3xl font-bold text-gold-gradient">4.8</span>
+                  <p className="mt-1 text-xs text-muted-foreground">Average Score</p>
+                </div>
+                <div>
+                  <span className="font-display text-3xl font-bold text-gold-gradient">12.4K</span>
+                  <p className="mt-1 text-xs text-muted-foreground">Total Reviews</p>
+                </div>
+                <div>
+                  <span className="font-display text-3xl font-bold text-gold-gradient">98%</span>
+                  <p className="mt-1 text-xs text-muted-foreground">Recommend</p>
+                </div>
+              </div>
+            </div>
+          </Reveal>
+          <Reveal delay={0.1}>
+            <Distribution />
+          </Reveal>
         </div>
       </div>
     </section>

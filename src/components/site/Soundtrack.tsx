@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useRef, useEffect } from "react";
 import { Play, Pause, Disc3 } from "lucide-react";
 import { TRACKS } from "@/data/series";
 import { SectionHeading } from "./SectionHeading";
@@ -27,7 +27,76 @@ function Waveform({ active }: { active: boolean }) {
 }
 
 export function Soundtrack() {
-  const [current, setCurrent] = useState<number | null>(0);
+  const [current, setCurrent] = useState<number | null>(null);
+  const audioCtxRef = useRef<AudioContext | null>(null);
+  const oscillatorsRef = useRef<OscillatorNode[]>([]);
+  const gainNodesRef = useRef<GainNode[]>([]);
+
+  // Track frequencies for each track
+  const trackFrequencies = [
+    [55, 82.4, 110, 164.8],
+    [65.4, 98, 130.8, 196],
+    [73.4, 110, 146.8, 220],
+    [82.4, 123.5, 164.8, 246.9],
+    [98, 146.8, 196, 293.7],
+  ];
+
+  const startTrack = (trackIndex: number) => {
+    if (!audioCtxRef.current) {
+      const Ctx = window.AudioContext || (window as any).webkitAudioContext;
+      audioCtxRef.current = new Ctx();
+    }
+    const ctx = audioCtxRef.current;
+    const frequencies = trackFrequencies[trackIndex % trackFrequencies.length];
+
+    // Stop previous track
+    stopTrack();
+
+    // Create oscillators for current track
+    const newOscillators: OscillatorNode[] = [];
+    const newGainNodes: GainNode[] = [];
+    frequencies.forEach((freq, i) => {
+      const osc = ctx.createOscillator();
+      osc.type = i === 0 ? "sawtooth" : i === 1 ? "square" : i === 2 ? "triangle" : "sine";
+      osc.frequency.setValueAtTime(freq, ctx.currentTime);
+      
+      const gain = ctx.createGain();
+      gain.gain.setValueAtTime(0, ctx.currentTime);
+      gain.gain.linearRampToValueAtTime(0.08 / frequencies.length, ctx.currentTime + 0.5);
+
+      osc.connect(gain);
+      gain.connect(ctx.destination);
+      osc.start();
+
+      newOscillators.push(osc);
+      newGainNodes.push(gain);
+    });
+
+    oscillatorsRef.current = newOscillators;
+    gainNodesRef.current = newGainNodes;
+  };
+
+  const stopTrack = () => {
+    const ctx = audioCtxRef.current;
+    if (!ctx) return;
+    gainNodesRef.current.forEach((gain) => {
+      gain.gain.linearRampToValueAtTime(0, ctx.currentTime + 0.3);
+    });
+    setTimeout(() => {
+      oscillatorsRef.current.forEach((osc) => osc.stop());
+      oscillatorsRef.current = [];
+      gainNodesRef.current = [];
+    }, 400);
+  };
+
+  useEffect(() => {
+    if (current !== null) {
+      startTrack(current);
+    } else {
+      stopTrack();
+    }
+    return () => stopTrack();
+  }, [current]);
 
   return (
     <section id="soundtrack" className="relative overflow-hidden border-t border-border/40 py-24 sm:py-32">

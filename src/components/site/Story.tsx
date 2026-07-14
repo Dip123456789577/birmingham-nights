@@ -1,6 +1,7 @@
 import { useRef, useState } from "react";
 import { motion, useScroll, useTransform } from "motion/react";
 import storyImg from "@/assets/story.jpg";
+import { TIMELINE } from "@/data/series";
 import { Reveal } from "./Reveal";
 import { SectionHeading } from "./SectionHeading";
 import { cn } from "@/lib/utils";
@@ -123,6 +124,22 @@ export function Story() {
               </motion.div>
             </div>
           </div>
+        </div>
+
+        {/* Timeline cards */}
+        <div className="mt-20 grid gap-4 sm:grid-cols-2 lg:grid-cols-5">
+          {TIMELINE.map((t, i) => (
+            <Reveal key={t.year} delay={i * 0.06}>
+              <motion.div
+                whileHover={{ y: -4 }}
+                className="glass rim-gold group h-full p-5 transition-shadow hover:gold-glow"
+              >
+                <span className="font-display text-2xl font-black text-gold-gradient">{t.year}</span>
+                <h4 className="mt-2 font-display text-base text-foreground">{t.title}</h4>
+                <p className="mt-2 text-xs leading-relaxed text-muted-foreground">{t.text}</p>
+              </motion.div>
+            </Reveal>
+          ))}
         </div>
       </div>
     </section>
